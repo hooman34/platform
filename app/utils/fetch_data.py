@@ -62,17 +62,19 @@ def fred_quandl(indx, start_date, end_date):
     return df
 
 
-def fred_fred(code, idx_name, observation_start=None, observation_end=None):
+def fred_fred(code, observation_start=None, observation_end=None):
     """
-    date: 'MM/DD/YYY'
+    date: yyyy-mm--dd
     """
     logger.info("Fetching data from fred: {}, from {} to {}.".format(code, observation_start, observation_end))
+
+    observation_start = convert_date_format(observation_start, 'Fred')
+    observation_end = convert_date_format(observation_end, 'Fred')
 
     df = fred.get_series(code, observation_start=observation_start, observation_end=observation_end)
     df = pd.DataFrame(df).reset_index()
     df.columns = ['date', 'v']
     df.loc[:, 'code'] = code
-    df.loc[:, 'code_name'] = idx_name
 
     df.loc[:, 'p_key'] = df['date'].astype(str).str.replace("-", "_") + "_" + df['code']
     return df
@@ -82,8 +84,13 @@ def investing_api(call_type, ticker, from_date, to_date, country='united states'
     """
     call_type: etf, stock, fund, index
     ticker: str. ticker name
-    from_date: dd/mm/yyyy
+    from_date: yyyy-mm--dd
+    to_date: yyyy-mm--dd
     """
+
+    from_date = convert_date_format(from_date, 'Investing.com')
+    to_date = convert_date_format(to_date, 'Investing.com')
+
     if call_type == 'etf':
         logger.info("Fetching etf from investing_api: {}, from {} to {}".format(ticker, from_date, to_date))
 
