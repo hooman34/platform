@@ -1,6 +1,4 @@
 import os
-import mysql.connector
-from mysql.connector import Error
 import pandas as pd
 import investpy
 from fredapi import Fred
@@ -10,7 +8,8 @@ import quandl
 from datetime import date
 from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
-from utils.utils import *
+from utils.fetch_data import *
+from utils.visualization import *
 
 print("Currently working at {}".format(os.getcwd()))
 
@@ -28,3 +27,4 @@ def call_data():
     print(d)
 
 sched.start()
+
