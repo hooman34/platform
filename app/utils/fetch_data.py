@@ -6,6 +6,7 @@ from pathlib import Path
 import quandl
 import investpy
 import requests
+from urllib.request import urlopen
 from .log import get_logger
 
 # auth
@@ -18,6 +19,7 @@ with open(str(basepath) + '/keys/keys.json', 'r') as key_file:
 
 fred = Fred(api_key=keys['fred'])
 quandl.ApiConfig.api_key = keys['quandl']
+financial_modeling_prep = keys['financial_modeling_prep']
 
 
 def fundamental_metric(soup, metric):
@@ -145,6 +147,42 @@ def alpha_vantage_api(call_type, ticker, currency='USD', key=keys['alpha_vantage
         
     return data
 
+
+class FMP:
+
+    def __init__(self):
+        self.key = financial_modeling_prep
+        logger.info("Financial Modeling Prep api ready.")
+
+    def get_jsonparsed_data(self, url):
+        """
+        Receive the content of ``url``, parse it as JSON and return the object.
+
+        Parameters
+        ----------
+        url : str
+
+        Returns
+        -------
+        dict
+        """
+        response = urlopen(url)
+        data = response.read().decode("utf-8")
+        return json.loads(data)
+
+    def get_historical_insider_trade_ticker(self, ticker, num_pages=1):
+        logger.info("Fetching {} pages of insider trade data. Ticker {}. .".format(num_pages, ticker))
+
+        df = pd.DataFrame()
+
+        for page in range(num_pages):
+            url = "https://financialmodelingprep.com/api/v4/insider-trading?symbol={}&page={}&apikey={}".format(ticker,
+                                                                                                                page,
+                                                                                                                self.key)
+            insider_trade = self.get_jsonparsed_data(url)
+            df = pd.concat([df, pd.DataFrame(insider_trade)], axis=0)
+
+        return df
 
 
 
