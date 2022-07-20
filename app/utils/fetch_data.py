@@ -171,7 +171,7 @@ class FMP:
         return json.loads(data)
 
     def get_historical_insider_trade_ticker(self, ticker, num_pages=1):
-        logger.info("Fetching {} pages of insider trade data. Ticker {}. .".format(num_pages, ticker))
+        logger.info("Fetching {} pages of {} insider trade data.".format(num_pages, ticker))
 
         df = pd.DataFrame()
 
