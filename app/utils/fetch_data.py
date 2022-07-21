@@ -176,15 +176,23 @@ class FMP:
         df = pd.DataFrame()
 
         for page in range(num_pages):
-            url = "https://financialmodelingprep.com/api/v4/insider-trading?symbol={}&page={}&apikey={}".format(ticker,
-                                                                                                                page,
-                                                                                                                self.key)
+            url = "https://financialmodelingprep.com/api/v4/insider-trading?symbol={}&page={}&apikey={}".format(ticker, page, self.key)
             insider_trade = self.get_jsonparsed_data(url)
             df = pd.concat([df, pd.DataFrame(insider_trade)], axis=0)
 
+        df = df.reset_index(inplace=False)
+        df['transactionDate'] = pd.to_datetime(df['transactionDate'], format='%Y-%m-%d')
+
         return df
 
+    def get_stock_split_history(self, ticker):
+        logger.info("Fetching stock split history for {}".format(ticker))
 
+        url = "https://financialmodelingprep.com/api/v3/historical-price-full/stock_split/{}?apikey={}".format(ticker, self.key)
+        stock_split = self.get_jsonparsed_data(url)
 
+        df = pd.DataFrame(stock_split['historical'])
+        df['symbol'] = stock_split['symbol']
+        df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
 
-
+        return df
