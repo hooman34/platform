@@ -82,7 +82,7 @@ def fred_fred(code, observation_start=None, observation_end=None):
     return df
 
 
-def investing_api(call_type, ticker, from_date, to_date, country='united states'):
+def investing_api(call_type, ticker, from_date, to_date, country='united states', interval='daily'):
     """
     call_type: etf, stock, fund, index
     ticker: str. ticker name
@@ -99,20 +99,23 @@ def investing_api(call_type, ticker, from_date, to_date, country='united states'
         etf_name = etfs.loc[(etfs.symbol == ticker), 'name'].tolist()[0]
         data = investpy.get_etf_historical_data(etf=etf_name, country=country,
                                                 from_date=from_date,
-                                                to_date=to_date).reset_index()
-        logger.info("Fetching etf from investing_api: {}, from {} to {}".format(ticker, from_date, to_date))
+                                                to_date=to_date,
+                                                interval=interval).reset_index()
+        logger.info("Fetching {} etf from investing_api: {}, from {} to {}".format(interval, ticker, from_date, to_date))
         
     elif call_type == 'stock':
         data = investpy.stocks.get_stock_historical_data(stock=ticker, country=country,
                                                          from_date=from_date,
-                                                         to_date=to_date).reset_index()
-        logger.info("Fetching stock from investing_api: {}, from {} to {}".format(ticker, from_date, to_date))
-        
+                                                         to_date=to_date,
+                                                         interval=interval).reset_index()
+        logger.info("Fetching {} stock from investing_api: {}, from {} to {}".format(interval, ticker, from_date, to_date))
+
     elif call_type == 'index':
         data = investpy.get_index_historical_data(index=ticker, country=country,
-                                                         from_date=from_date,
-                                                         to_date=to_date).reset_index()
-        logger.info("Fetching index from investing_api: {}, from {} to {}".format(ticker, from_date, to_date))
+                                                  from_date=from_date,
+                                                  to_date=to_date,
+                                                  interval=interval).reset_index()
+        logger.info("Fetching {} index from investing_api: {}, from {} to {}".format(interval, ticker, from_date, to_date))
         
     else:
         logger.info("not supported call type")
