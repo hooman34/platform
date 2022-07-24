@@ -10,7 +10,7 @@ def create_plots(plot_settings):
         plot_settings(list): [[dataset, x_column, y_column], [dataset, x_column, y_column], ...]
 
     Returns:
-
+        fig (plotly.graph_objs._figure.Figure): plot
     """
     fig = _plot_data('line', plot_settings)
 

@@ -20,7 +20,7 @@ if not _LOG_DIR.exists():
     _LOG_DIR.mkdir()
 
 
-def get_logger(name: str) -> logging.Logger:
+def get_logger(name):
     """
     Log to file using logging.FileHandler
     Log to console also.
@@ -68,7 +68,6 @@ def print_info() -> NoReturn:
 
     Returns:
         None
-
     """
     logger = get_logger(__name__)
 
@@ -84,7 +83,7 @@ def print_info() -> NoReturn:
 
 
 @contextmanager
-def output_performance(logger, process_name: str) -> NoReturn:
+def output_performance(logger, process_name):
     """
     Under influence of @contextmanager, enableing __enter__() and __exit__(),
         which can be used with `with`, and release resource after execution.
@@ -107,7 +106,7 @@ def output_performance(logger, process_name: str) -> NoReturn:
 
 
 @contextmanager
-def output_progress(logger, process_name: str, skip_on_error: bool = False) -> NoReturn:
+def output_progress(logger, process_name, skip_on_error: bool = False) -> NoReturn:
     """
     Under influence of @contextmanager, enableing __enter__() and __exit__(),
         which can be used with `with`, and release resource after execution.
@@ -116,7 +115,7 @@ def output_progress(logger, process_name: str, skip_on_error: bool = False) -> N
     Args:
         logger (logging.Logger): Logger object
         process_name (str): Process name
-        skip_on_error (bool): False. If false, raise exception when error
+        skip_on_error (:obj: `bool`, optional): False. If false, raise exception when error
 
     Raises:
         Exception

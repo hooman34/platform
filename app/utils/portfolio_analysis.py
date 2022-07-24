@@ -9,6 +9,9 @@ with open(str(basepath) + '/keys/keys.json', 'r') as key_file:
     keys = json.load(key_file)
 
 class portfolio_analysis:
+    """
+    Class object for Portfolio analysis
+    """
 
     def __init__(self, ticker_list, period_type='annual'):
         assert period_type in ['quarterly', 'annual']

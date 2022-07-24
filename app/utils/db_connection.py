@@ -6,6 +6,17 @@ logger = get_logger(__name__)
 
 
 def create_server_connection(host_name, user_name, user_password):
+    """
+    Create server connection
+
+    Args:
+        host_name (str):
+        user_name (srt):
+        user_password (str):
+
+    Returns:
+        connection
+    """
     connection = None
     try:
         connection = mysql.connector.connect(
