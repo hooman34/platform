@@ -5,7 +5,7 @@ from .log import get_logger
 logger = get_logger(__name__)
 
 
-def plot_data(plot_settings):
+def plot_data(plot_settings, show_y_axis=False):
     """
     Create a plotly figure. The input should be a list of list.
 
@@ -31,9 +31,9 @@ def plot_data(plot_settings):
     update_dict = {}
 
     for i in range(len(plot_settings) - 1):
-        update_dict['yaxis' + str(i + 2)] = {"overlaying": 'y', 'visible': False}
+        update_dict['yaxis' + str(i + 2)] = {"overlaying": 'y', 'visible': show_y_axis}
     fig['layout'].update(update_dict)
-    fig['layout'].update({'yaxis': {'visible': False}})
+    fig['layout'].update({'yaxis': {'visible': show_y_axis}})
 
     fig.update_layout(legend=dict(
         orientation="h",
