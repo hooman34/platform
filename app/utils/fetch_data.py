@@ -79,7 +79,7 @@ def standardize_data(source, df, symbol, call_type=None, interval=None, currency
     if source=='fred':
         df.columns = ['Date', 'v']
         df.loc[:, 'symbol'] = symbol
-        df['type'] = call_type'
+        df['type'] = call_type
         df['interval'] = interval
         df['unit'] = currency
         df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
