@@ -51,11 +51,11 @@ def convert_date_format(date, format):
     """
     y, m, d = date.split('-')
 
-    if format == 'Fred':
+    if format == 'fred':
         return m + '/' + d + '/' + y
     elif format == 'YMD':
         return y + '-' + m + '-' + d
-    elif format == 'Investing.com':
+    elif format == 'investing':
         return d + '/' + m + '/' + y
 
 def standardize_data(source, df, symbol, call_type=None, interval=None, currency=None):
@@ -79,7 +79,7 @@ def standardize_data(source, df, symbol, call_type=None, interval=None, currency
     if source=='fred':
         df.columns = ['Date', 'v']
         df.loc[:, 'symbol'] = symbol
-        df['type'] = 'econ_index'
+        df['type'] = call_type'
         df['interval'] = interval
         df['unit'] = currency
         df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
@@ -115,7 +115,7 @@ def standardize_data(source, df, symbol, call_type=None, interval=None, currency
 
     return df
 
-def fred_fred(symbol, observation_start=None, observation_end=None):
+def fred_fred(symbol, observation_start=None, observation_end=None, call_type='index'):
     """
     Fetch FRED data from the Fred API.
 
@@ -129,8 +129,8 @@ def fred_fred(symbol, observation_start=None, observation_end=None):
     """
     logger.info("Fetching data from fred: {}, from {} to {}.".format(symbol, observation_start, observation_end))
 
-    observation_start = convert_date_format(observation_start, 'Fred')
-    observation_end = convert_date_format(observation_end, 'Fred')
+    observation_start = convert_date_format(observation_start, 'fred')
+    observation_end = convert_date_format(observation_end, 'fred')
 
     fred_search_df = fred.search(symbol).reset_index()
     interval = fred_search_df.frequency.values[0].lower()
@@ -139,7 +139,7 @@ def fred_fred(symbol, observation_start=None, observation_end=None):
     df = fred.get_series(symbol, observation_start=observation_start, observation_end=observation_end)
     df = pd.DataFrame(df).reset_index()
 
-    df = standardize_data('fred', df, symbol=symbol, interval=interval, currency=unit)
+    df = standardize_data('fred', df, symbol=symbol, call_type=call_type, interval=interval, currency=unit)
 
     return df
 
@@ -159,8 +159,8 @@ def investing_api(call_type, symbol, from_date, to_date, interval='daily', count
     Returns:
         df (pd.DataFrame): dataset from investing.com.
     """
-    from_date = convert_date_format(from_date, 'Investing.com')
-    to_date = convert_date_format(to_date, 'Investing.com')
+    from_date = convert_date_format(from_date, 'investing')
+    to_date = convert_date_format(to_date, 'investing')
 
     if call_type == 'etf':
         # search name from ticker and return
