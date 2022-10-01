@@ -18,7 +18,6 @@ with open(str(basepath) + '/keys/keys.json', 'r') as key_file:
 
 fred = Fred(api_key=keys['fred'])
 alpha_vantage = keys['alpha_vantage']
-financial_modeling_prep = keys['financial_modeling_prep']
 
 def fundamental_metric(soup, metric):
     return soup.find(text=metric).find_next(class_='snapshot-td2').text
@@ -322,74 +321,3 @@ def alpha_vantage_api_financial_statements(call_type, symbol, key=alpha_vantage)
     data = standardize_data('alpha_vantage_financial_statements', data, symbol=symbol, call_type=call_type)
 
     return data
-
-
-class FMP:
-    """
-    Class object for FinancialModelingPrep
-    """
-
-    def __init__(self):
-        self.key = financial_modeling_prep
-        logger.info("Financial Modeling Prep api ready.")
-
-    def get_jsonparsed_data(self, url):
-        """
-        Receive the content of ``url``, parse it as JSON and return the object.
-
-        Args:
-            url (str): url of the API
-
-        Returns:
-            parsed_content (json): parsed content returned from the API
-        """
-        response = urlopen(url)
-        data = response.read().decode("utf-8")
-        return json.loads(data)
-
-    def get_historical_insider_trade_ticker(self, ticker, num_pages=1):
-        """
-        Retrieve historical data
-
-        Args:
-            ticker (str): ticker name
-            num_pages (int): number of pages of reports to call. 1 page = 1 API call
-
-        Returns:
-            df (pd.DataFrame): insider trade historical data
-        """
-        logger.info("Fetching {} pages of {} insider trade data.".format(num_pages, ticker))
-
-        df = pd.DataFrame()
-
-        for page in range(num_pages):
-            url = "https://financialmodelingprep.com/api/v4/insider-trading?symbol={}&page={}&apikey={}".format(ticker, page, self.key)
-            insider_trade = self.get_jsonparsed_data(url)
-            df = pd.concat([df, pd.DataFrame(insider_trade)], axis=0)
-
-        df = df.reset_index(inplace=False)
-        df['transactionDate'] = pd.to_datetime(df['transactionDate'], format='%Y-%m-%d')
-
-        return df
-
-    def get_stock_split_history(self, ticker):
-        """
-        Fetch stock split history of the ticker
-
-        Args:
-            ticker (str): ticker name
-
-        Returns:
-            df (pd.DataFrame): dataframe of the
-        """
-
-        logger.info("Fetching stock split history for {}".format(ticker))
-
-        url = "https://financialmodelingprep.com/api/v3/historical-price-full/stock_split/{}?apikey={}".format(ticker, self.key)
-        stock_split = self.get_jsonparsed_data(url)
-
-        df = pd.DataFrame(stock_split['historical'])
-        df['symbol'] = stock_split['symbol']
-        df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
-
-        return df
