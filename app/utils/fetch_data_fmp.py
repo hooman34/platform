@@ -1,4 +1,5 @@
 from subprocess import call
+from tracemalloc import start
 import pandas as pd
 import json
 from pathlib import Path
@@ -40,12 +41,21 @@ class FMP:
         data = response.read().decode("utf-8")
         return json.loads(data)
 
+    def get_sector_preformance(self, start_date, end_date):
+
+
+        url = "https://financialmodelingprep.com/api/v3/historical-sectors-performance?from={}$to={}&apikey={}".format(start_date, end_date, self.key)
+        sector_performance = self.get_jsonparsed_data(url)
+        df = pd.DataFrame(sector_performance)
+
+        return df
+
     def get_historical_daily_price(self, call_type, symbol, start_date, end_date):
         """
         Retrieve historical price data. daily.
         
         Args:
-            call_type (str): index or stock
+            call_type (str): index or stock. The index should be in unicode
             symbol (str): symbol
         
         """
@@ -53,7 +63,7 @@ class FMP:
 
         if call_type == "index":
 
-            url = "https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}".format(symbol, self.key)
+            url = "https://financialmodelingprep.com/api/v3/historical-price-full/{}?from={}&to={}&apikey={}".format(symbol, start_date, end_date, self.key)
         
         elif call_type == "stock":
             url = "https://financialmodelingprep.com/api/v3/historical-price-full/{}?from={}&to={}&apikey={}".format(symbol, start_date, end_date, self.key)
@@ -141,4 +151,3 @@ class FMP:
 
         return df
 
-        
